@@ -1,0 +1,1230 @@
+openapi: 3.0.1
+info:
+  version: 1.0.0
+  title: Absence Admin API
+  description: 'This application manage the absence of students.'
+servers:
+- url: https://api.absence.com
+tags:
+- name: User
+- name: Teaching
+- name: Presence
+
+
+paths:
+  /students/{id}:
+    get:
+      tags:
+      - User
+      summary: Get student by identifier
+      operationId: getStudentById 
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: The identified student
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/StudentId'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error400'
+        403:
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error403'
+        404:
+          description: Ressource Not found
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error404'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error500'
+
+    put:
+      tags:
+        - User
+      summary: Update existing students
+      description: Update students with Id provided
+      operationId: UpdateStudents
+      parameters:
+        - name: Id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: students UpdateStudents
+          content:
+            application/json:
+              schema: 
+                type: array
+                items:
+                  $ref: '#/components/schemas/StudentId'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error400'
+        403:
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error403'
+        404:
+          description: Ressource Not found
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error404'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error500'
+
+    patch:
+      tags:
+        - User
+      summary: Update partial
+      operationId: updatePartial
+      description: |
+        Possible updates:
+        * first_name: change
+        * last_name: change
+        * group: change
+        * status: change
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/StudentId'
+            examples:
+              changeFirstname:
+                summary: change firstname
+                value:
+                  id: 1
+                  first_name: "new firstname"
+              changeLastname:
+                summary: change or add the lastname 
+                value:
+                  id: 2
+                  last_name: "new lastname"
+              changeGroup:
+                summary: change the group of the student
+                value:
+                  id: 3
+                  group:  "become G2"
+              changeStatus:
+                summary: change student's status
+                value: 
+                  id: 1
+                  enum: [ENABLED,DISABLED]
+      responses:
+        200:
+          description: infos about students updated
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/StudentId'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error400'
+        403:
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error403'
+        404:
+          description: Ressource Not found
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error404'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error500'
+
+    delete:
+      tags:
+        - User
+      summary: Removing students
+      description: Delete students by identifier
+      operationId: deleteStudentById
+      parameters:
+        - name: Id
+          in: path
+          required: true
+          schema: 
+            type: string
+      responses:
+        200:
+          description: Student deleted with success
+          content: {}
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error400'
+        403:
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error403'
+        404:
+          description: Ressource Not found
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error404'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error500'
+            
+   
+  /students:
+    get:
+      tags:
+        - User
+      summary: Get all students
+      operationId: getSudents
+      parameters:
+        - name: page
+          in: query
+          schema:
+            $ref: '#/components/schemas/Page'
+        - name: page-size
+          in: query
+          schema: 
+            $ref: '#/components/schemas/PageSize'
+      responses:
+        200:
+          description: List of students
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Student'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error400'
+        403:
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error403'
+        404:
+          description: Ressource Not found
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error404'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error500'
+
+    post: 
+      tags:
+        - User
+      summary: Create new students 
+      operationId: CreateStudents
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateUser'
+      responses:
+        200:
+          description: The created students
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#/components/schemas/StudentId'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error400'
+        403:
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error403'
+        404:
+          description: Ressource Not found
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error404'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error500'
+  /teachers/{id}:
+    get:
+      tags:
+        - User
+      summary: Get teacher by identifier
+      operationId: getTeacherById 
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: The identified teacher
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/TeacherId'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error400'
+        403:
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error403'
+        404:
+          description: Ressource Not found
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error404'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error500' 
+    put:
+      tags:
+        - User
+      summary: Update existing teacher
+      description: Update teachers with Id provided
+      operationId: UpdateTeachers
+      parameters:
+        - name: Id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: teacher updated
+          content:
+            application/json:
+              schema: 
+                type: array
+                items:
+                  $ref: '#/components/schemas/TeacherId'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error400'
+        403:
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error403'
+        404:
+          description: Ressource Not found
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error404'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error500'
+    delete:
+      tags:
+        - User
+      summary: Removing teacher
+      description: Delete teachers by identifier
+      operationId: deleteTeacherById
+      parameters:
+        - name: Id
+          in: path
+          required: true
+          schema: 
+            type: string
+      responses:
+        200:
+          description: Teacher deleted with success
+          content: {}
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error400'
+        403:
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error403'
+        404:
+          description: Ressource Not found
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error404'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error500'
+  
+  /teacher:
+    get:
+      tags:
+        - User
+      summary: Get all teacher
+      operationId: getTeachers
+      parameters:
+        - name: page
+          in: query
+          schema:
+            $ref: '#/components/schemas/Page'
+        - name: page-size
+          in: query
+          schema: 
+            $ref: '#/components/schemas/PageSize'
+      responses:
+        200:
+          description: List of teachers
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Teacher'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error400'
+        403:
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error403'
+        404:
+          description: Ressource Not found
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error404'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error500'
+    post: 
+      tags:
+        - User
+      summary: Create new teacher 
+      operationId: CreateTeachers
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: array
+              items:
+                $ref: '#/components/schemas/CreateUser'
+      responses:
+        200:
+          description: The created teacher
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#/components/schemas/TeacherId'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error400'
+        403:
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error403'
+        404:
+          description: Ressource Not found
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error404'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error500'
+
+  /courses/{id}:
+    get:
+      tags:
+        - Teaching
+      summary: Get course by identifier
+      operationId: getCourseById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        200:
+          description: The identified course
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Course'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error400'
+        403:
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error403'
+        404:
+          description: Ressource Not found
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error404'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error500' 
+    
+    put:
+      tags:
+        - Teaching
+      summary: Update courses
+      operationId: updateCourses
+      description: Update existing courses
+      parameters:
+        - name: Id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: courses updated
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Course'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error400'
+        403:
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error403'
+        404:
+          description: Ressource Not found
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error404'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error500'
+
+    delete:
+      tags:
+        - Teaching
+      summary: Delete existing course
+      operationId: RemoveCourse
+      parameters:
+        - name: Id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Course deleted with success
+          content: {}
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error400'
+        403:
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error403'
+        404:
+          description: Ressource Not found
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error404'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error500'
+
+
+  /courses:
+    get:
+      tags:
+        - Teaching
+      summary: Get all courses
+      operationId: getCourses
+      responses:
+        200:
+          description: List of all courses
+          content:
+           application/json:
+              schema: 
+                type: array
+                items:
+                  $ref: '#/components/schemas/Course'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error400'
+        403:
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error403'
+        404:
+          description: Ressource Not found
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error404'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error500'
+
+    post: 
+      tags:
+        - Teaching
+      summary: Create new course
+      description: Create new course
+      operationId: NewCourses
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/CreateCourse'
+      responses:
+        200:
+          description: The created course
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/CreateCourse'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error400'
+        403:
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error403'
+        404:
+          description: Ressource Not found
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error404'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error500'
+
+  /presence/{id}:
+    get:
+      tags:
+        - Presence
+      summary: Get presence list of the identifier
+      description: Wanna see the presence list of the identifier?
+      operationId: PresenceById
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema: 
+          type: string
+      - name: Start
+        in: path
+        required: true
+        schema: 
+          type: string
+          format: date
+      - name: End 
+        in: path
+        required: true
+        schema: 
+          type: string
+          format: date
+      responses:
+        200:
+          description: List of presence of the Id
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Presence'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error400'
+        403:
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error403'
+        404:
+          description: Ressource Not found
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error404'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error500'
+  
+  
+  /presence/{group}:
+    get:
+      tags:
+        - Presence
+      summary: Get presence list by group
+      description: Want to get the presence list of each group?
+      operationId: PresenceByGroup
+      parameters:
+      - name: group
+        in: path
+        required: true
+        schema: 
+          type: string
+      - name: Start
+        in: path
+        required: true
+        schema: 
+          type: string
+          format: date
+      - name: End 
+        in: path
+        required: true
+        schema: 
+          type: string
+          format: date
+      responses:
+        200:
+          description: List of presence group
+          content:
+            application/json:
+              schema: 
+                type: array
+                items: 
+                  $ref: '#/components/schemas/Presence'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error400'
+        403:
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error403'
+        404:
+          description: Ressource Not found
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error404'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error500'
+ 
+    patch:
+      tags:
+        - Presence
+      summary: update presence
+      operationId: updatePresence
+      description: |
+        The only change possible:
+        * checkStatus: change
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/Presence'
+            examples:
+              changeCheckStatus:
+                summary: change status of students
+                value:
+                  id: 1
+                  enum: ["HERE", "MISSING"]
+      responses:
+        200:
+          description: Status of students updated
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Presence'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error400'
+        403:
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error403'
+        404:
+          description: Ressource Not found
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error404'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error500'
+
+  /teacher/{id}/presence:
+    post: 
+      tags:
+        - Presence
+      summary: Create a new presence
+      operationId: createNewPresence
+      requestBody:
+        description: student presence list to createNewPresence
+        required: true
+        content:
+          application/json:
+            schema: 
+              type: array
+              items:
+                $ref: '#/components/schemas/CreatePresence'
+      responses:
+        200:
+          description: presence created with success
+          content:
+            application/json:
+              schema: 
+                type: array
+                items:
+                  $ref: '#/components/schemas/Presence'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error400'
+        403:
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error403'
+        404:
+          description: Ressource Not found
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error404'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error500'
+
+  /student/{id}/presence?type=missing:
+    get:
+      tags:
+        - Presence
+      summary: Get presence's list of the day
+      operationId: presenceListByDay
+      parameters:
+        - name: CheckStatus
+          in: path
+          required: true
+          schema: 
+            type: string
+            enum:
+              - MISSING
+              - HERE
+        - name: Start
+          in: path
+          required: true
+          schema: 
+            type: string
+            format: date
+        - name: End 
+          in: path
+          required: true
+          schema: 
+            type: string
+            format: date
+      responses:
+        200:
+          description: list of presence today
+          content:
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/Presence'
+        400:
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error400'
+        403:
+          description: Forbidden 
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error403'
+        404:
+          description: Ressource Not found
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error404'
+        500:
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Error500'
+      
+
+
+
+components:
+  schemas:
+    CreateUser:
+      type: object
+      properties:
+        ref:
+          type: string
+          example: STD210150
+        first_name:
+           type: string
+        last_name:
+          type: string
+        sex:
+          type: string
+          enum:
+            - M
+            - F
+        birth_date:
+          type: string
+          format: date
+        address:
+          type: string
+        phone:
+          type: string
+        email:
+          type: string
+        entrance_datetime:
+          type: string
+          format: date-time
+        status:
+          $ref: '#/components/schemas/EnableStatus'
+
+    StudentId:
+      allOf:
+        - $ref: '#/components/schemas/CreateUser'
+      type: object
+      properties:
+        id:
+          type: string
+        group: 
+          $ref: '#/components/schemas/Group'
+
+    Student: 
+      type: object
+      properties:
+        id: 
+          type: string
+        ref:
+          type: string
+          example: STD210100
+        first_name:
+           type: string
+        last_name:
+          type: string
+        group: 
+          $ref: '#/components/schemas/Group'
+
+    EnableStatus:
+      type: string
+      enum:
+        - ENABLED
+        - DISABLED
+
+    Group:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          example: The group number one
+        ref:
+          type: string
+          example: G1
+        creation_datetime:
+          type: string
+          format: date-time
+
+    CreateTeacher:
+      allOf:
+        -  $ref: '#/components/schemas/CreateUser'
+
+    TeacherId:
+      allOf:
+        - $ref: '#/components/schemas/CreateUser'
+      type: object
+      properties:
+        id: 
+          type: string
+        speciality:
+          $ref: '#/components/schemas/CreateCourse'
+
+    Teacher: 
+      type: object
+      properties:
+        id: 
+          type: string
+        first_name:
+           type: string
+        last_name:
+          type: string
+        speciality:
+          $ref: '#/components/schemas/CreateCourse'
+
+
+    Presence:
+      type: object
+      properties:
+        stdID:
+          type: string
+        courseId:
+          type: string
+        date: 
+          type: string
+          format: date-time
+        status: 
+          $ref: '#/components/schemas/CheckStatus'
+
+    CreatePresence:
+      allOf:
+        - $ref: '#/components/schemas/Student'
+        - $ref: '#/components/schemas/CreateCourse'
+      type: object
+      properties:
+        date: 
+          type: string
+          format: date-time
+        status: 
+          $ref: '#/components/schemas/CheckStatus'
+        
+    CheckStatus:
+      type: string
+      enum:
+        - HERE
+        - MISSING
+
+    Course:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+          example: Algorithmics
+      allOf:
+        - $ref: '#/components/schemas/CreateCourse'
+
+    CreateCourse:
+      type: object
+      properties:
+        ref:
+          type: string
+          example: PROG2
+        teacher:
+          type: string
+          example: Mr Toky
+
+    Page:
+      type: integer
+      description: Start at `1`
+    PageSize:
+      type: integer
+      description: Cannot exceed `500`
+
+    Exception:
+      type: object
+      properties:
+        type:
+          type: string
+        message:
+          type: string
+
+    Error400:
+      allOf:
+        - $ref: '#/components/schemas/Exception'
+      example:
+        type: BadRequestException
+        message: Bad request
+    Error403:
+      allOf:
+        - $ref: '#/components/schemas/Exception'
+      example:
+        type: NotAuthorizedException
+        message: Not authorized
+    Error404:
+      allOf:
+        - $ref: '#/components/schemas/Exception'
+      example:
+        type: ResourceNotFoundException
+        message: Resource of type <T> identified by <I> not found
+    Error500:
+      allOf:
+        - $ref: '#/components/schemas/Exception'
+      example:
+        type: InternalServerException
+        message: Unexpected error
+        
+        
+          
+       
